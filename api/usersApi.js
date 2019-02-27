@@ -15,38 +15,35 @@ router.post('/addUser', function (req, res, next) {
         }
     })
 })
-router.get('/getUser', function(req,res, next){
-    User.find(function(err, users){
-        if(err){
+router.get('/getUser', function (req, res, next) {
+    User.find(function (err, users) {
+        if (err) {
             res.send(err)
-        }
-        else{
+        } else {
             res.send(users)
         }
     })
 })
 
-router.get('/getUser/:id', function(req,res, next){
-    var id=req.params.id
-    User.findById(id).exec(function(err, user){
-        if(err){
+router.get('/getUser/:id', function (req, res, next) {
+    var id = req.params.id
+    User.findById(id).exec(function (err, user) {
+        if (err) {
             res.send(err)
-        }
-        else{
+        } else {
             res.send(user)
         }
     })
 })
 
 
-router.get('/deleteUser/:id', function(req,res, next){
-    var id=req.params.id
-    
-    User.findByIdAndRemove(id).exec(function(err, user){
-        if(err){
+router.get('/deleteUser/:id', function (req, res, next) {
+    var id = req.params.id
+
+    User.findByIdAndRemove(id).exec(function (err, user) {
+        if (err) {
             res.send(err)
-        }
-        else{
+        } else {
             res.send(user)
         }
     })
@@ -54,100 +51,130 @@ router.get('/deleteUser/:id', function(req,res, next){
 
 
 
-router.post('/addTodos/:id', function(req,res, next){
-    var id=req.params.id
-    var username=req.body.username
-    var password=req.body.password
-    var email=req.body.email
-    
-    
-    Todo.updateOne({ "_id" : id }, { $set: { username : username , email : email , password : password} }).exec(function(err, user){
-        if(err){
-            res.send(err)
+router.post('/addTodos/:id', function (req, res, next) {
+    var id = req.params.id
+    var username = req.body.username
+    var password = req.body.password
+    var email = req.body.email
+
+
+    Todo.updateOne({
+        "_id": id
+    }, {
+        $set: {
+            username: username,
+            email: email,
+            password: password
         }
-        else{
+    }).exec(function (err, user) {
+        if (err) {
+            res.send(err)
+        } else {
             res.send(user)
         }
     })
 })
 
 
-router.post('/login', function(req,res, next){  
-      
-    var password=req.body.password
-    var email=req.body.email
-    User.findOne({ "email" : email } ).exec(function(err, user){
-        if(err){
+router.post('/login', function (req, res, next) {
+
+    var password = req.body.password
+    var email = req.body.email
+    User.findOne({
+        "email": email
+    }).exec(function (err, user) {
+        if (err) {
             res.send(err)
-        }
-        else{
-            if(user){
-                if (password== user.password)
-                {
-                    res.send({message:"success",user})
-                }  else {
-                    res.send({message:'wrong password'});
+        } else {
+            if (user) {
+                if (password == user.password) {
+                    res.send({
+                        message: "success",
+                        user
+                    })
+                } else {
+                    res.send({
+                        message: 'wrong password'
+                    });
                 }
             } else {
-                res.send({message:'wrong email'});
+                res.send({
+                    message: 'wrong email'
+                });
             }
-              
+
         }
     })
 })
 
-router.get('/addTodos/:idUser/:idTodo', function(req,res, next){
-    var idUser=req.params.idUser
-    var idTodo=req.params.idTodo
+router.get('/addTodos/:idUser/:idTodo', function (req, res, next) {
+    var idUser = req.params.idUser
+    var idTodo = req.params.idTodo
 
-    User.updateOne({ "_id" : idUser }, { $push: { todos : idTodo}} ).exec(function(err, user){
-        if(err){
-            res.send(err)
+    User.updateOne({
+        "_id": idUser
+    }, {
+        $push: {
+            todos: idTodo
         }
-        else{
+    }).exec(function (err, user) {
+        if (err) {
+            res.send(err)
+        } else {
             res.send(user)
         }
     })
 })
-router.get('/deleteTodos/:idUser/:idTodo', function(req,res, next){
-    var idUser=req.params.idUser
-    var idTodo=req.params.idTodo
+router.get('/deleteTodos/:idUser/:idTodo', function (req, res, next) {
+    var idUser = req.params.idUser
+    var idTodo = req.params.idTodo
 
-    User.updateOne({ "_id" : idUser }, { $pull: { todos : idTodo}} ).exec(function(err, user){
-        if(err){
-            res.send(err)
+    User.updateOne({
+        "_id": idUser
+    }, {
+        $pull: {
+            todos: idTodo
         }
-        else{
+    }).exec(function (err, user) {
+        if (err) {
+            res.send(err)
+        } else {
             res.send(user)
         }
     })
 })
 
-router.get('/deleteTodo/:idUser/:idTodo', function(req,res, next){
-    var idUser=req.params.idUser
-    var idTodo=req.params.idTodo
+router.get('/deleteTodo/:idUser/:idTodo', function (req, res, next) {
+    var idUser = req.params.idUser
+    var idTodo = req.params.idTodo
 
-    User.findOne({ "_id" : idUser } ).exec(function(err, user){
-        if(err){
-           
+    User.findOne({
+        "_id": idUser
+    }).exec(function (err, user) {
+        if (err) {
+
             res.send(err)
-        }
-        else{
-            for(var i=0; i<=user.todos.length; i++){
-                
-                
-                if (user.todos[i]==idTodo ){
-                    
+        } else {
+            for (var i = 0; i <= user.todos.length; i++) {
+
+
+                if (user.todos[i] == idTodo) {
+
                     user.todos.splice(i, 1);
-                    
-                    break;                          
-                } 
-            }
-            User.updateOne({ "_id" : idUser }, { $set: { todos : user.todos}} ).exec(function(err, user){
-                if(err){
-                    res.send(err)
+
+                    break;
                 }
-                else{
+            }
+            User.updateOne({
+                "_id": idUser
+            }, {
+                $set: {
+                    todos: user.todos
+                }
+            }).exec(function (err, user) {
+                if (err) {
+                    res.send(err)
+                } else {
                     res.send(user)
                 }
             })
@@ -155,4 +182,4 @@ router.get('/deleteTodo/:idUser/:idTodo', function(req,res, next){
     })
 })
 
-module.exports=router;
+module.exports = router;

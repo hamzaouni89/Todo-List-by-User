@@ -9,25 +9,36 @@ import { Router, Params } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  loginForm : FormGroup;
-  constructor(public userService: UserService , private router: Router) {
+  loginForm: FormGroup;
+  constructor(public userService: UserService, private router: Router) {
     this.loginForm = new FormGroup({
       email: new FormControl(),
       password: new FormControl()
     });
   }
-  
+
 
   ngOnInit() {
   }
 
   login(user) {
-    console.log(user)
-    return this.userService.loginUser(user).subscribe((res) => {
-      this.router.navigate(['todos']);
-      console.log("valide");
 
+    return this.userService.loginUser(user).subscribe((res) => {
+      console.log(user)
+      console.log(res)
+      if (res.message === "success") {
+        localStorage.setItem('connected', JSON.stringify(user));
+        this.router.navigate(['todos']);
+        console.log("user valide");
+      }
+      else {
+        console.log("user invalide");
+      }
     });
   }
+  logout() {
 
+    window.localStorage.removeItem('connected');
+    this.router.navigateByUrl('/');
+  }
 }
