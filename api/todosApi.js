@@ -1,9 +1,9 @@
 var express = require('express')
 var Todo = require('../models/todo')
 var router = express.Router()
+var authenticate = require('./auth').authenticate;
 
-
-router.post('/addTodo', function (req, res, next) {
+router.post('/addTodo',authenticate, function (req, res, next) {
     var todo = new Todo(req.body);
     console.log(req.body)
     todo.save(function (err, todo) {

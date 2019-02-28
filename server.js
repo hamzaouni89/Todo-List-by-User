@@ -1,4 +1,5 @@
 var express = require('express')
+
 var app = express()
 var db=require('./database/db')
 var users=require('./api/usersApi')
@@ -18,6 +19,7 @@ app.get('/', function (req, res) {
   res.send('Hello World')
 })
  
+
 app.listen(3000, (err =>{
   if(err) throw err;
   console.log('server is running on port 3000')
