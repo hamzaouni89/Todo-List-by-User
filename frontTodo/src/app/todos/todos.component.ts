@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { TodoService } from '../todo.service';
 import { FormGroup, FormControl } from '@angular/forms';
+import * as jwt_decode from "jwt-decode";
 
 @Component({
   selector: 'app-todos',
@@ -10,18 +11,21 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class TodosComponent implements OnInit {
   todos;
+  decoded = jwt_decode(localStorage.getItem('token'));
   formTodo: FormGroup;
-  formTodoModifer : FormGroup;
+  formTodoModifer: FormGroup;
   constructor(public todoService: TodoService) {
     this.formTodo = new FormGroup({
       titre: new FormControl(),
-      description: new FormControl()
+      description: new FormControl(),
+      owner: new FormControl(),
     });
     this.formTodoModifer = new FormGroup({
       titre: new FormControl(),
-      description: new FormControl()
+      description: new FormControl(),
+      owner: new FormControl(),
     });
-   
+
   }
 
   ngOnInit() {
@@ -31,6 +35,9 @@ export class TodosComponent implements OnInit {
 
   createTodo() {
     console.log(this.formTodo.value)
+    this.formTodo.value.owner = this.decoded._id;
+    console.log(this.formTodo.value.owner, this.decoded._id);
+
     this.todoService.createTodo(this.formTodo.value).subscribe((res) => {
       this.getTodos()
     });
@@ -39,6 +46,7 @@ export class TodosComponent implements OnInit {
   getTodos() {
     this.todoService.getTodos().subscribe((res) => {
       console.log(res)
+      this.formTodo.value.owner = this.decoded._id;
       this.todos = res;
     })
   }
@@ -49,27 +57,28 @@ export class TodosComponent implements OnInit {
       return this.getTodos();
     })
   }
-  
-update (todo) {
 
-  console.log(todo)
-  this.formTodoModifer = new FormGroup({
-    titre: new FormControl(todo.titre),
-    description: new FormControl(todo.description)
-  });
-}
+  update(todo) {
 
-updateTodo(todo) {
+    console.log(todo)
+    this.formTodoModifer = new FormGroup({
+      titre: new FormControl(todo.titre),
+      description: new FormControl(todo.description)
 
-  todo.titre = this.formTodoModifer.controls.titre.value;
-  todo.description = this.formTodoModifer.controls.description.value;
-  console.log(todo)
-  return this.todoService.updateTodo(todo).subscribe((res) => {
-    todo=res;
-  
-  });
-}
-  
+    });
+  }
+
+  updateTodo(todo) {
+
+    todo.titre = this.formTodoModifer.controls.titre.value;
+    todo.description = this.formTodoModifer.controls.description.value;
+    console.log(todo)
+    return this.todoService.updateTodo(todo).subscribe((res) => {
+      todo = res;
+
+    });
+  }
+
 
 
 

@@ -18,19 +18,19 @@ router.post('/register', function (req, res) {
         });
     }
     User.findOne({
-            attributes: ['email'],
-            where: {
-                email: email
-            }
-        })
+        attributes: ['email'],
+        where: {
+            email: email
+        }
+    })
         .then(function (userfound) {
             if (!userfound) {
                 bcrypt.hash(password, 10, function (err, bcryptedPassword) {
                     var newUser = User.create({
-                            email: email,
-                            username: username,
-                            password: bcryptedPassword
-                        })
+                        email: email,
+                        username: username,
+                        password: bcryptedPassword
+                    })
                         .then(function (newUser) {
                             res.status(201).send({
                                 '_id': newUser._id
@@ -66,38 +66,38 @@ router.post('/login', function (req, res) {
             'error': 'missing parametres'
         })
     }
-    User.findOne({"email": email}).exec(function (err,userfound) {
-            if (userfound) {
-                bcrypt.compare(password, userfound.password, function (err, resBycrypt) {
-                    if (resBycrypt) {
+    User.findOne({ "email": email }).exec(function (err, userfound) {
+        if (userfound) {
+            bcrypt.compare(password, userfound.password, function (err, resBycrypt) {
+                if (resBycrypt) {
 
-                        const token = jwt.sign({
-                                '_id': userfound._id,
-                                'email': userfound.email,
-                                'username': userfound.username,
-                            },
-                            JWT_SIGN_SECRET, {
-                                expiresIn: '1h'
-                            });
-                            res.status(200).send({
-                                Message: 'authentification valide',
-                                token: token
-                            })
-                   
-                    } else {
-                        res.status(403).send({
-                            'error': 'invalid password'
-                        })
-                    }
-                    
-                });
-            } else {
-                res.status(404).send({
-                    'error': 'user not exist in DB'
-                })
-            }
+                    const token = jwt.sign({
+                        '_id': userfound._id,
+                        'email': userfound.email,
+                        'username': userfound.username,
+                    },
+                        JWT_SIGN_SECRET, {
+                            expiresIn: '1h'
+                        });
+                    res.status(200).send({
+                        Message: 'authentification valide',
+                        token: token
+                    })
 
-        })
+                } else {
+                    res.status(403).send({
+                        'error': 'invalid password'
+                    })
+                }
+
+            });
+        } else {
+            res.status(404).send({
+                'error': 'user not exist in DB'
+            })
+        }
+
+    })
 
 });
 
@@ -159,18 +159,18 @@ router.post('/addTodos/:id', function (req, res, next) {
     Todo.updateOne({
         "_id": id
     }, {
-        $set: {
-            username: username,
-            email: email,
-            password: password
-        }
-    }).exec(function (err, user) {
-        if (err) {
-            res.send(err)
-        } else {
-            res.send(user)
-        }
-    })
+            $set: {
+                username: username,
+                email: email,
+                password: password
+            }
+        }).exec(function (err, user) {
+            if (err) {
+                res.send(err)
+            } else {
+                res.send(user)
+            }
+        })
 })
 
 
@@ -212,16 +212,16 @@ router.get('/addTodos/:idUser/:idTodo', function (req, res, next) {
     User.updateOne({
         "_id": idUser
     }, {
-        $push: {
-            todos: idTodo
-        }
-    }).exec(function (err, user) {
-        if (err) {
-            res.send(err)
-        } else {
-            res.send(user)
-        }
-    })
+            $push: {
+                todos: idTodo
+            }
+        }).exec(function (err, user) {
+            if (err) {
+                res.send(err)
+            } else {
+                res.send(user)
+            }
+        })
 })
 router.get('/deleteTodos/:idUser/:idTodo', function (req, res, next) {
     var idUser = req.params.idUser
@@ -230,16 +230,16 @@ router.get('/deleteTodos/:idUser/:idTodo', function (req, res, next) {
     User.updateOne({
         "_id": idUser
     }, {
-        $pull: {
-            todos: idTodo
-        }
-    }).exec(function (err, user) {
-        if (err) {
-            res.send(err)
-        } else {
-            res.send(user)
-        }
-    })
+            $pull: {
+                todos: idTodo
+            }
+        }).exec(function (err, user) {
+            if (err) {
+                res.send(err)
+            } else {
+                res.send(user)
+            }
+        })
 })
 
 router.get('/deleteTodo/:idUser/:idTodo', function (req, res, next) {
@@ -266,16 +266,16 @@ router.get('/deleteTodo/:idUser/:idTodo', function (req, res, next) {
             User.updateOne({
                 "_id": idUser
             }, {
-                $set: {
-                    todos: user.todos
-                }
-            }).exec(function (err, user) {
-                if (err) {
-                    res.send(err)
-                } else {
-                    res.send(user)
-                }
-            })
+                    $set: {
+                        todos: user.todos
+                    }
+                }).exec(function (err, user) {
+                    if (err) {
+                        res.send(err)
+                    } else {
+                        res.send(user)
+                    }
+                })
         }
     })
 })

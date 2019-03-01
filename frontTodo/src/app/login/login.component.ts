@@ -26,8 +26,8 @@ export class LoginComponent implements OnInit {
     return this.userService.loginUser(user).subscribe((res) => {
       console.log(user)
       console.log(res)
-      if (res.message === "success") {
-        localStorage.setItem('connected', JSON.stringify(user));
+      if (res.Message === "authentification valide") {
+        localStorage.setItem('token', res.token);
         this.router.navigate(['todos']);
         console.log("user valide");
       }
